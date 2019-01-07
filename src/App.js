@@ -5,6 +5,11 @@ import BoardItem from './Component/BoardItem';
 
 class App extends Component {
 
+  constructor(props) {
+    super(props);
+    this.child = React.createRef();
+  }
+
   state = {
     // the state of App component
       maxNo: 3,
@@ -26,14 +31,37 @@ class App extends Component {
   }
 
   handleSaveData = (data) => {
-    this.setState ({
+    let boards = this.state.boards;
+
+    if (data.brdno == null || data.brdno === '' || data.brdno === undefined) {
+      // New : Insert
+      this.setState ({
         maxNo: this.state.maxNo+1,
-        boards: this.state.boards.concat({
+        boards: boards.concat({
           brdno: this.state.maxNo,
           brddate: new Date(), ...data
         })
     });
+    } else {
+      this.setState ({
+          boards: boards.map(row => data.brdno === row.brdno ? {...data}:row)
+          })
+      }
   }
+
+  // Clicking by user, remove the texts selected from the boards in the parent
+  handleRemove = (brdno) => {
+    this.setState ({
+      // To remove the value from array: filter 
+      boards: this.state.boards.filter(row => row.brdno !== brdno)
+    })
+  }
+
+  // the parent calls the selected row and data: handleSelectRow -> transfer as a parameter
+  handleSelectRow = (row) => {
+    this.child.current.handleSelectRow(row);
+  }
+
 
   render() {
     // JS part ///////////////////
@@ -55,7 +83,9 @@ class App extends Component {
 
         {/* Receive the parameter(this.props) 
             handleSaveData function is transferred to onSaveData function */}
-        <BoardForm onSaveData = {this.handleSaveData} />
+        
+        {/* ref: to bring the element of the component handle => save into this.child*/}
+        <BoardForm onSaveData = {this.handleSaveData} ref = {this.child} />
 
         <table border="1"> 
           <tbody> 
@@ -66,7 +96,8 @@ class App extends Component {
               <td width="100">Date</td> 
             </tr>
             { boards.map(row =>
-               (<BoardItem key={row.brdno} row={row} />) 
+               (<BoardItem key={row.brdno} row={row} onRemove={this.handleRemove}
+                          onSelectRow={this.handleSelectRow} />) 
              ) } 
           </tbody> 
         </table>
