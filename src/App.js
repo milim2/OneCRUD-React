@@ -15,24 +15,26 @@ class App extends Component {
       maxNo: 3,
       
       boards: [
-        {
-          brdno: 1,
-          brdwriter: 'Facebook',
-          brdtitle: 'React closes out dominant 2018',
-          brddate: new Date()
-        },
-        {
-          brdno: 2,
-          brdwriter: 'Ollie Barder',
-          brdtitle: 'The Future Of Nintendo May Not Be On Home Consoles',
-          brddate: new Date()
-        }
-      ]
+        // {
+        //   brdno: 1,
+        //   brdwriter: 'Facebook',
+        //   brdtitle: 'React closes out dominant 2018',
+        //   brddate: new Date()
+        // },
+        // {
+        //   brdno: 2,
+        //   brdwriter: 'Ollie Barder',
+        //   brdtitle: 'The Future Of Nintendo May Not Be On Home Consoles',
+        //   brddate: new Date()
+        // }
+      ],
+      selectedBoard: {}
   }
 
   handleSaveData = (data) => {
     let boards = this.state.boards;
 
+  
     if (data.brdno == null || data.brdno === '' || data.brdno === undefined) {
       // New : Insert
       this.setState ({
@@ -58,15 +60,18 @@ class App extends Component {
   }
 
   // the parent calls the selected row and data: handleSelectRow -> transfer as a parameter
-  handleSelectRow = (row) => {
-    this.child.current.handleSelectRow(row);
+  // handleSelectRow = (row) => {
+  //   this.child.current.handleSelectRow(row);
+  // }
+  handleSelectedRow = (row) => {
+    this.setState({selectedBoard: row});
   }
 
 
   render() {
     // JS part ///////////////////
 
-    const { boards } = this.state; // Same with const boards = this.state. boards;
+    const { boards, selectedBoard } = this.state; // Same with const boards = this.state. boards;
     
     // for making ONE LIST - Used map()
     // const list = boards.map(function(row) {
@@ -85,7 +90,7 @@ class App extends Component {
             handleSaveData function is transferred to onSaveData function */}
         
         {/* ref: to bring the element of the component handle => save into this.child*/}
-        <BoardForm onSaveData = {this.handleSaveData} ref = {this.child} />
+        <BoardForm selectedBoard = {selectedBoard} onSaveData = {this.handleSaveData} />
 
         <table border="1"> 
           <tbody> 
